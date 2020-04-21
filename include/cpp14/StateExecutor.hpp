@@ -17,34 +17,27 @@
 template<typename Context, typename... States>
 class StateContext;
 
-// Declaración de la plantilla HasType<T, Tuple> que indica si el tipo T pertenece a la tupla Tuple.
 template <typename T, typename Tuple>
 struct HasType;
 
-// Tercera especialización de HasType<T, Tuple>. El tipo T no está en la tupla porque la recursión
-// ha acabado y la tupla se ha quedado vacía.
 template <typename T>
 struct HasType<T, std::tuple<>> : std::false_type {};
 
-// Segunda especialización de HasType<T, Tuple>. El tipo T está en la tupla porque tras la recursión
-// el primer elemento de la tupla es T.
 template <typename T, typename... Ts>
 struct HasType<T, std::tuple<T, Ts...>> : std::true_type {};
 
-// Primera especialización de HasType<T, Tuple>. Se extrae el primer elemento de la tupla y continua
-// la recursión con el resto de elementos.
 template <typename T, typename U, typename... Ts>
 struct HasType<T, std::tuple<U, Ts...>> : HasType<T, std::tuple<Ts...>> {};
 
-// La plantilla TupleHasType<T, Tuple> indica si el tipo T pertenece a la tupla Tuple. No es más que
-// alias de HasType<T, Tuple>::type.
+// Indica si el tipo T pertenece a la tupla Tuple.
 template <typename T, typename Tuple>
 using TupleHasType = typename HasType<T, Tuple>::type;
 
-// El estado cuando se queda sin tipos tras la recursión.
+// Un estado sin entradas.
 template <typename...>
 struct State
 {
+   using Types = std::tuple<>;
    void handle() const {}
 };
 

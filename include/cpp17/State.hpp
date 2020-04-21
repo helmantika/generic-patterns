@@ -24,10 +24,11 @@ struct HasType;
 template <typename T, typename... Ts>
 struct HasType<T, std::tuple<Ts...>> : std::disjunction<std::is_same<T, Ts>...> {};
 
-// El estado cuando se queda sin tipos tras la recursión.
+// Un estado sin entradas.
 template <typename...>
 struct State
 {
+   using Types = std::tuple<>;
    void handle() const {}
 };
 
