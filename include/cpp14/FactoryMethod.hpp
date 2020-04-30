@@ -76,7 +76,7 @@ public:
    /**
     * Crea el objeto vinculado al identificador <i>aKey</i> y devuelve un puntero a su base.
     */
-   std::shared_ptr<Base> create( const Key& aKey, Args&&... aArgs )
+   std::shared_ptr<Base> create( const Key& aKey, Args... aArgs )
    {
       typename Table::const_iterator it = theProducts.find( aKey );
       return it != theProducts.end() ? it->second( std::forward<Args>( aArgs )... ) : nullptr;
