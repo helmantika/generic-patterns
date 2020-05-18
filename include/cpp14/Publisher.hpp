@@ -311,11 +311,6 @@ private:
    std::mutex theMutex;
 
    /**
-    * El identificador de la tarea.
-    */
-   std::thread theDispatcher;
-
-   /**
     * La condición que señala cuándo hay que enviar las notificaciones.
     */
    std::condition_variable canNotify;
@@ -329,6 +324,11 @@ private:
     * Indica si el sujeto tiene notificaciones pendientes.
     */
    bool thePendingNotification{};
+
+   /**
+    * El identificador de la tarea.
+    */
+   std::thread theDispatcher;
 
    /**
     * El sujeto que tiene notificaciones pendientes.
