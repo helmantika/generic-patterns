@@ -9,16 +9,19 @@ struct AbstractFactoryTest : public Test
 {
    struct Chassis
    {
+      virtual ~Chassis() {}
       virtual const char* const make() = 0;
    };
 
    struct BodyWork
    {
+      virtual ~BodyWork() {}
       virtual const char* const manufacture() = 0;
    };
 
    struct Interior
    {
+      virtual ~Interior() {}
       virtual const char* const produce() = 0;
    };
 
