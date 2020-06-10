@@ -2,17 +2,27 @@
 // MIT License
 //
 // Copyright (c) 2019 Jorge Rodríguez Santos
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so
 //-------------------------------------------------------------------------------
 
-#ifndef INCLUDE_GENERIC_PATTERNS_PUBLISHER_HPP_
-#define INCLUDE_GENERIC_PATTERNS_PUBLISHER_HPP_
+#if !defined(EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_)
+#define EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_
 
 #include <forward_list>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-#include "Subscriber.hpp"
+#include "Cyrus/Subscriber.hpp"
+
+namespace Cyrus
+{
 
 /**
  * @brief Base para la creación de publicadores.
@@ -78,6 +88,15 @@ public:
    void notify()
    {
       theChangeManager.notify( *this );
+   }
+
+   /**
+    * Notifica a los observadores registrados, entregando una copia del sujeto, que los datos de la
+    * clase han cambiado.
+    */
+   void deliver()
+   {
+      theChangeManager.deliver( *this );
    }
 
 private:
@@ -258,6 +277,20 @@ public:
       std::unique_lock<std::mutex> aLock( theMutex );
       thePendingNotification = true;
       theSubject = static_cast<T*>( &aSubject );
+      theCopiedSubject = false;
+      canNotify.notify_one();
+   }
+
+   /**
+    * Notifica a los observadores registrados, entregando una copia del sujeto, que los datos de la
+    * clase han cambiado.
+    */
+   void deliver( AsyncPublisher<T>& aSubject )
+   {
+      std::unique_lock<std::mutex> aLock( theMutex );
+      thePendingNotification = true;
+      theSubject = new T{ static_cast<T&>( aSubject ) };
+      theCopiedSubject = true;
       canNotify.notify_one();
    }
 
@@ -269,8 +302,8 @@ private:
    void finishDispatcher()
    {
       std::unique_lock<std::mutex> aLock( theMutex );
-      thePendingNotification = true;
       theSubject = nullptr;
+      thePendingNotification = true;
       canNotify.notify_one();
    }
 
@@ -293,6 +326,11 @@ private:
             for( auto i : theObservers )
             {
                i->update( static_cast<const T&>( *theSubject ) );
+            }
+
+            if( theCopiedSubject )
+            {
+               delete theSubject;
             }
          }
       }
@@ -326,14 +364,19 @@ private:
    bool thePendingNotification{};
 
    /**
-    * El identificador de la tarea.
+    * Indica si al notificar se ha hecho copia del sujeto
     */
-   std::thread theDispatcher;
+   bool theCopiedSubject{};
 
    /**
     * El sujeto que tiene notificaciones pendientes.
     */
    T* theSubject{};
+
+   /**
+    * El identificador de la tarea.
+    */
+   std::thread theDispatcher;
 };
 
 /**
@@ -407,4 +450,6 @@ private:
    mutable std::mutex theMutex;
 };
 
-#endif
+}
+
+#endif // !defined(EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_)
