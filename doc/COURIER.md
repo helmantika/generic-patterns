@@ -138,7 +138,7 @@ El ejemplo anterior tiene ahora este aspecto:
 
 ![](/images/generic_courier_example.png)
 
-La interfaz `Destination` y su derivada `Home` son exactamente iguales. Sin embargo, la interfaz `Deliverable` ahora es una plantilla de clase de la que heredan `Book` y `Computer` indicándole el tipo del objeto destino.
+La interfaz `Destination` y su derivada `Home` son exactamente iguales. Sin embargo, la interfaz `Deliverable` ahora es una plantilla de clase de la que heredan `Book` y `Computer` indicándole la clase de la interfaz destinataria.
 
 ```cpp
 template<typename T>
