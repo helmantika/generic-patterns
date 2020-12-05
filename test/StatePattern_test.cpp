@@ -1,4 +1,4 @@
-#include "gmock/gmock.h"
+#include <gtest/gtest.h>
 #include "cpp14/StateContext.hpp"
 
 using namespace ::testing;
@@ -116,7 +116,7 @@ TEST_F( StatePatternTest, ThreeActionsThreeStateChanges )
    aContext.handle( '-' );
    aContext.handle( '>' );
 
-   ASSERT_THAT( aContext.theString, Eq( "Prueba->" ) );
+   ASSERT_EQ( aContext.theString, "Prueba->" );
 }
 
 TEST_F( StatePatternTest, FourActionsThreeStateChanges )
@@ -127,7 +127,7 @@ TEST_F( StatePatternTest, FourActionsThreeStateChanges )
    aContext.handle( 1 );
    aContext.mul();
 
-   ASSERT_THAT( aContext.theNumber, Eq( 207 ) );
+   ASSERT_EQ( aContext.theNumber, 207 );
 }
 
 

@@ -19,10 +19,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-#include "Cyrus/Subscriber.hpp"
-
-namespace Cyrus
-{
+#include "cpp14/Subscriber.hpp"
 
 /**
  * @brief Base para la creación de publicadores.
@@ -449,7 +446,5 @@ private:
     */
    mutable std::mutex theMutex;
 };
-
-}
 
 #endif // !defined(EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_)
