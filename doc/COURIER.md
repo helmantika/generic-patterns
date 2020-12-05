@@ -168,7 +168,7 @@ public:
 };
 ```
 
-La conexión entre las clases *entregables* y la interfaz destinataria se realiza en el cuerpo de la funciones `deliver` porque es ahí donde se invoca al destinatario. Si la interfaz destinataria cambia, también lo debe hacer la definición de las funciones `deliver`.
+La conexión entre las clases *entregables* y la interfaz destinataria se realiza en el cuerpo de la funciones `deliver` porque es ahí donde se invoca al destinatario. Si la interfaz destinataria cambia, también lo debe hacer la definición de dichas funciones.
 
 La plantilla `Courier` es similar a la versión anterior, solo que ahora el destinatario en el parámetro de la plantilla.
 
@@ -196,7 +196,7 @@ private:
 };
 ```
 
-La plantilla `Courier`ahora se crea pasándole la interfaz destinataria como argumento de la plantilla y el destinatario concreto como argumento del constructor, tal y como se hacía antes.
+La plantilla `Courier` ahora se crea pasándole la interfaz destinataria como argumento de la plantilla y, tal y como se hacía antes, el destinatario concreto como argumento del constructor.
 
 ```cpp
 int main()
