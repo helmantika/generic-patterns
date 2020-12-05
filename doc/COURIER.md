@@ -170,7 +170,7 @@ public:
 
 La conexión entre las clases *entregables* y la interfaz destinataria se realiza en el cuerpo de la funciones `deliver` porque es ahí donde se invoca al destinatario. Si la interfaz destinataria cambia, también lo debe hacer la definición de dichas funciones.
 
-La plantilla `Courier` es similar a la versión anterior, solo que ahora el destinatario en el parámetro de la plantilla.
+La plantilla `Courier` es similar a la versión anterior, solo que ahora la interfaz destinataria es el parámetro de la plantilla.
 
 ```cpp
 template<typename T>
