@@ -62,6 +62,7 @@ TEST_F(ObserverAndAsyncPublisherTest, OneObserverWatchesOneSubject)
    std::shared_ptr<View> aView = std::make_shared<View>();
 
    NumberModel aNumberModel;
+   aNumberModel.start();
    aNumberModel.attach( aView );
    aNumberModel.notify();
 
@@ -76,8 +77,10 @@ TEST_F(ObserverAndAsyncPublisherTest, OneObserverWatchesTwoSubjects)
    std::shared_ptr<View> aView = std::make_shared<View>();
 
    NumberModel aNumberModel;
+   aNumberModel.start();
    aNumberModel.attach( aView );
    LetterModel aLetterModel;
+   aLetterModel.start();
    aLetterModel.attach( aView );
 
    aNumberModel.notify();
@@ -99,6 +102,7 @@ TEST_F(ObserverAndAsyncPublisherTest, TwoObserversWatchesOneSubject)
    std::shared_ptr<View> aView2 = std::make_shared<View>();
 
    NumberModel aNumberModel;
+   aNumberModel.start();
    aNumberModel.attach( aView1 );
    aNumberModel.attach( aView2 );
 
@@ -120,9 +124,11 @@ TEST_F(ObserverAndAsyncPublisherTest, TwoObserverWatchesTwoSubjects)
    std::shared_ptr<View> aView2 = std::make_shared<View>();
 
    NumberModel aNumberModel;
+   aNumberModel.start();
    aNumberModel.attach( aView1 );
    aNumberModel.attach( aView2 );
    LetterModel aLetterModel;
+   aLetterModel.start();
    aLetterModel.attach( aView1 );
    aLetterModel.attach( aView2 );
 

@@ -19,6 +19,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
+#include "cpp14/SafeQueue.hpp"
 #include "cpp14/Subscriber.hpp"
 
 /**
@@ -61,6 +62,14 @@ public:
    Publisher& operator=( Publisher&& aSubject )
    {
       return *this;
+   }
+
+   /**
+    * Pone en marcha la tarea de publicación asíncrona.
+    */
+   void start()
+   {
+      theChangeManager.start();
    }
 
    /**
@@ -219,13 +228,18 @@ class AsyncChangeManager
 {
 public:
 
-   /**
-    * Crea la tarea encarga de enviar las notificaciones.
-    */
-   AsyncChangeManager()
-   : theDispatcher{ [this] { dispatcher(); } }
-   {
+   AsyncChangeManager() = default;
 
+   /**
+    * Arranca la tarea encarga de enviar las notificaciones.
+    */
+   void start()
+   {
+      if( !theRunningThread.load() )
+      {
+         theRunningThread.store( true );
+         theDispatcher = std::thread{ [this] { dispatcher(); } };
+      }
    }
 
    /**
@@ -233,9 +247,12 @@ public:
     */
    ~AsyncChangeManager()
    {
-      theRunningThread.store( false );
-      finishDispatcher();
-      theDispatcher.join();
+      if( theRunningThread.load() )
+      {
+         theRunningThread.store( false );
+         theQueue.stop();
+         theDispatcher.join();
+      }
    }
 
    AsyncChangeManager( const AsyncChangeManager& ) = delete;
@@ -271,11 +288,8 @@ public:
     */
    void notify( AsyncPublisher<T>& aSubject )
    {
-      std::unique_lock<std::mutex> aLock( theMutex );
-      thePendingNotification = true;
-      theSubject = static_cast<T*>( &aSubject );
       theCopiedSubject = false;
-      canNotify.notify_one();
+      theQueue.push( static_cast<T*>( &aSubject ) );
    }
 
    /**
@@ -284,25 +298,11 @@ public:
     */
    void deliver( AsyncPublisher<T>& aSubject )
    {
-      std::unique_lock<std::mutex> aLock( theMutex );
-      thePendingNotification = true;
-      theSubject = new T{ static_cast<T&>( aSubject ) };
       theCopiedSubject = true;
-      canNotify.notify_one();
+      theQueue.push( new T{ static_cast<T&>( aSubject ) } );
    }
 
 private:
-
-   /**
-    * Fuerza la terminación de la tarea.
-    */
-   void finishDispatcher()
-   {
-      std::unique_lock<std::mutex> aLock( theMutex );
-      theSubject = nullptr;
-      thePendingNotification = true;
-      canNotify.notify_one();
-   }
 
    /**
     * Tarea encargada de enviar a los observadores las notificaciones.
@@ -311,23 +311,22 @@ private:
    {
       while( theRunningThread.load() )
       {
-         std::unique_lock<std::mutex> aLock( theMutex );
-         while( !thePendingNotification )
+         T* aSubject = theQueue.front();
+         if( theRunningThread.load() )
          {
-            canNotify.wait( aLock, [this] { return thePendingNotification; } );
-         }
-         thePendingNotification = false;
+            theQueue.pop();
 
-         if( theSubject )
-         {
-            for( auto i : theObservers )
+            if( aSubject )
             {
-               i->update( static_cast<const T&>( *theSubject ) );
-            }
+               for( auto i : theObservers )
+               {
+                  i->update( static_cast<const T&>( *aSubject ) );
+               }
 
-            if( theCopiedSubject )
-            {
-               delete theSubject;
+               if( theCopiedSubject.load() )
+               {
+                  delete aSubject;
+               }
             }
          }
       }
@@ -348,27 +347,22 @@ private:
    /**
     * La condición que señala cuándo hay que enviar las notificaciones.
     */
-   std::condition_variable canNotify;
+   std::condition_variable theNotificationCondition;
 
    /**
     * Indica si la tarea se está ejecutando.
     */
-   std::atomic<bool> theRunningThread{ true };
+   std::atomic<bool> theRunningThread{};
 
    /**
     * Indica si el sujeto tiene notificaciones pendientes.
     */
-   bool thePendingNotification{};
+   SafeQueue<T*> theQueue;
 
    /**
-    * Indica si al notificar se ha hecho copia del sujeto
+    * Indica si al notificar se ha hecho copia del sujeto.
     */
-   bool theCopiedSubject{};
-
-   /**
-    * El sujeto que tiene notificaciones pendientes.
-    */
-   T* theSubject{};
+   std::atomic<bool> theCopiedSubject{};
 
    /**
     * El identificador de la tarea.
