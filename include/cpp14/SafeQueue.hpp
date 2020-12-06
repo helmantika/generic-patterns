@@ -11,8 +11,8 @@
 // furnished to do so
 //-------------------------------------------------------------------------------
 
-#ifndef SAFE_QUEUE_HPP_
-#define SAFE_QUEUE_HPP_
+#ifndef INCLUDE_GENERIC_PATTERNS_SAFE_QUEUE_HPP_
+#define INCLUDE_GENERIC_PATTERNS_SAFE_QUEUE_HPP_
 
 #include <thread>
 #include <mutex>

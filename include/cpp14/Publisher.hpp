@@ -11,8 +11,8 @@
 // furnished to do so
 //-------------------------------------------------------------------------------
 
-#if !defined(EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_)
-#define EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_
+#ifndef INCLUDE_GENERIC_PATTERNS_PUBLISHER_HPP_
+#define INCLUDE_GENERIC_PATTERNS_PUBLISHER_HPP_
 
 #include <forward_list>
 #include <thread>
@@ -441,4 +441,4 @@ private:
    mutable std::mutex theMutex;
 };
 
-#endif // !defined(EA_CFE4E95F_A5C4_4b86_B1CC_597588AA0AFB__INCLUDED_)
+#endif
