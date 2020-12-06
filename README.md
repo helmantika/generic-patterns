@@ -7,3 +7,4 @@ Por el momento, sólo se han generalizado cuatro patrones:
   - [El patrón «Método de fabricación»](doc/FACTORY-METHOD.md) (Factory Method)
   - [El patrón «Estado»](doc/STATE.md) (State)
   - [El patrón «Publicador/Suscriptor»](doc/PUBLISH-SUBSCRIBE.md) (Observador, Publish-Subscribe, Observer)
+  - [El patrón «Mensajero»](doc/COURIER.md) (Courier)
