@@ -25,7 +25,7 @@ struct CourierTest : public Test
          aDestination.receive( Book{ *this } );
       }
 
-      std::string theItem{ "Don Quijote de La Mancha" };
+      std::string theItem{ "Don Quijote de la Mancha" };
    };
 
    class Computer : public Deliverable<Destination&>
@@ -58,11 +58,11 @@ struct CourierTest : public Test
          theReadyData.notify_one();
       }
 
-      mutable std::string theBook;
-      mutable std::string theComputer;
+      std::string theBook;
+      std::string theComputer;
 
-      mutable std::mutex theMutex;
-      mutable std::condition_variable theReadyData;
+      std::mutex theMutex;
+      std::condition_variable theReadyData;
    };
 };
 
@@ -79,11 +79,11 @@ TEST_F(CourierTest, DispatchTwoObjects)
 
    std::unique_lock<std::mutex> aLock( aHome.theMutex );
    aHome.theReadyData.wait( aLock, [&aHome] {
-                                      return aHome.theBook == "Don Quijote de La Mancha" &&
+                                      return aHome.theBook == "Don Quijote de la Mancha" &&
                                              aHome.theComputer == "ZX Spectrum +3";
                                    } );
 
-   ASSERT_EQ( aHome.theBook, "Don Quijote de La Mancha" );
+   ASSERT_EQ( aHome.theBook, "Don Quijote de la Mancha" );
    ASSERT_EQ( aHome.theComputer, "ZX Spectrum +3" );
 }
 
