@@ -30,7 +30,7 @@ class Deliverable
 public:
 
    virtual ~Deliverable() {};
-   virtual void deliver( T&& aDestination ) const = 0;
+   virtual void deliver( T aDestination ) const = 0;
 };
 
 #endif

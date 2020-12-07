@@ -33,7 +33,7 @@ class Courier
 {
 public:
 
-   Courier( const T& aDestination )
+   Courier( T aDestination )
       :
       theQueue( [&aDestination]( std::shared_ptr<Deliverable<T>> aDeriverable ) {
                     aDeriverable->deliver( aDestination );
